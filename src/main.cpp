@@ -26,12 +26,27 @@ int main(int argc, char* const* argv) {
 
   Digraph<int, int> g;
 
-  // variables used to read the instance
+  /* Variables used to read the instance */
   int a, b, c;
   int numberOfVertex;
 
-  // open the instancee file
-  std::fstream file(args.get<char *>("-input"), std::fstream::in);
+  /* Open the input file */
+  std::fstream file;
+
+  #ifdef DEBUG
+    std::cout << "Opening instance file" << std::endl;
+  #endif
+
+  file.open(args.get<std::string>("-input"), std::fstream::in);
+
+  if (!file) {
+    std::cout << "Instance file not found. Aborting" << std::endl;
+    exit(0);
+  }
+
+  #ifdef DEBUG
+    std::cout << "Input found! Let's read it :)" << std::endl;
+  #endif
 
   // read both the vertex and edges number
   file >> numberOfVertex;
@@ -50,6 +65,11 @@ int main(int argc, char* const* argv) {
 
   file.close();
 
+  #ifdef DEBUG
+    std::cout << "Input readed with sucess." << std::endl;
+    std::cout << "Initializing timer!" << std::endl;
+  #endif
+
   /* Initializing the time counter */
   cxxtimer::Timer timer;
   timer.start();
@@ -60,8 +80,16 @@ int main(int argc, char* const* argv) {
   // std::cout << timer.count<std::chrono::seconds>() << std::endl;
 
 
+  #ifdef DEBUG
+    std::cout << "Building the CPLEX model." << std::endl;
+  #endif
+
   /* Solver constructor */
   Solver solver(&args, g);
+
+  #ifdef DEBUG
+    std::cout << "Model is OK. Lets solve it!" << std::endl;
+  #endif
 
   solver.solve();
 
